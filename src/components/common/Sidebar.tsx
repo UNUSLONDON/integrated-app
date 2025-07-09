@@ -47,12 +47,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   // Track which sections are expanded
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     main: true,
-    content: false,
-    settings: false
+    content: true,
+    settings: true
   });
 
   const toggleSection = (sectionKey: string) => {
-    if (isCollapsed) return; // Don't allow section toggle when sidebar is collapsed
+    // Allow section toggle even when collapsed for better UX
     
     setExpandedSections(prev => ({
       ...prev,
@@ -131,22 +131,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
             return (
               <div key={section.title}>
                 {/* Section Header */}
-                {!isCollapsed && (
-                  <button
-                    onClick={() => toggleSection(sectionKey)}
-                    className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-darkText hover:text-white transition-colors uppercase tracking-wider"
-                  >
-                    <span>{section.title}</span>
-                    {isExpanded ? (
+                <button
+                  onClick={() => toggleSection(sectionKey)}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-darkText hover:text-white transition-colors uppercase tracking-wider ${
+                    isCollapsed ? 'justify-center' : ''
+                  }`}
+                  title={isCollapsed ? section.title : undefined}
+                >
+                  {!isCollapsed && <span>{section.title}</span>}
+                  {!isCollapsed && (
+                    isExpanded ? (
                       <ChevronUp className="w-3 h-3" />
                     ) : (
                       <ChevronDown className="w-3 h-3" />
-                    )}
-                  </button>
-                )}
+                    )
+                  )}
+                  {isCollapsed && (
+                    <div className="w-6 h-0.5 bg-darkText rounded-full" />
+                  )}
+                </button>
                 
                 {/* Section Items */}
-                <div className={`space-y-1 ${!isCollapsed && !isExpanded ? 'hidden' : ''}`}>
+                <div className={`space-y-1 transition-all duration-200 overflow-hidden ${
+                  !isExpanded ? 'max-h-0 opacity-0' : 'max-h-96 opacity-100'
+                }`}>
                   {section.items.map((item) => {
                     const Icon = item.icon;
                     return (
@@ -154,7 +162,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
                         key={item.path}
                         to={item.path}
                         className={({ isActive }) =>
-                          `flex items-center px-4 py-3 rounded-lg transition-colors ${
+                          `flex items-center px-4 py-2 rounded-lg transition-colors ${
                             isActive
                               ? 'text-primary bg-primary/20'
                               : 'text-darkText hover:bg-gray-800 hover:text-white'
@@ -173,11 +181,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
           })}
           
           {/* Legacy Data Item - keeping for backward compatibility */}
-          <div className="pt-4 border-t border-gray-800 mt-4">
+          <div className="pt-2 border-t border-gray-800 mt-2">
             <NavLink
               to={legacyDataItem.path}
               className={({ isActive }) =>
-                `flex items-center px-4 py-3 rounded-lg transition-colors ${
+                `flex items-center px-4 py-2 rounded-lg transition-colors ${
                   isActive
                     ? 'text-primary bg-primary/20'
                     : 'text-darkText hover:bg-gray-800 hover:text-white'
