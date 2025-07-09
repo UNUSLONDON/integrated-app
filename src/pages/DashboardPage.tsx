@@ -1,7 +1,10 @@
 import React from 'react';
-import { LayoutDashboard, TrendingUp, Users, FileText, Calendar, CheckSquare } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, Users, FileText, Calendar, CheckSquare, Plus, Edit, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
+
   const stats = [
     { label: 'Total Posts', value: '124', icon: FileText, color: 'text-blue-400' },
     { label: 'Published', value: '89', icon: TrendingUp, color: 'text-green-400' },
@@ -9,11 +12,54 @@ const DashboardPage = () => {
     { label: 'Pending', value: '23', icon: CheckSquare, color: 'text-orange-400' },
   ];
 
+  const handleCreateNewPost = () => {
+    // Navigate to create post page or open modal
+    navigate('/content/all');
+  };
+
+  const handleCreateNewTask = () => {
+    // Navigate to create task page or open modal
+    navigate('/tasks');
+  };
+
+  const handleViewCalendar = () => {
+    // Navigate to calendar page
+    navigate('/calendar');
+  };
   return (
     <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-darkText">Welcome back! Here's what's happening with your content.</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+          <p className="text-darkText">Welcome back! Here's what's happening with your content.</p>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={handleCreateNewPost}
+            className="bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-lg flex items-center space-x-2 transition-colors font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Create New Post</span>
+          </button>
+          
+          <button
+            onClick={handleCreateNewTask}
+            className="bg-surface hover:bg-surface/80 text-white px-4 py-2.5 rounded-lg border border-gray-700 flex items-center space-x-2 transition-colors font-medium"
+          >
+            <Edit className="w-4 h-4" />
+            <span>Create New Task</span>
+          </button>
+          
+          <button
+            onClick={handleViewCalendar}
+            className="bg-surface hover:bg-surface/80 text-white px-4 py-2.5 rounded-lg border border-gray-700 flex items-center space-x-2 transition-colors font-medium"
+          >
+            <Eye className="w-4 h-4" />
+            <span>View Calendar</span>
+          </button>
+        </div>
       </div>
 
       {/* Stats Grid */}
