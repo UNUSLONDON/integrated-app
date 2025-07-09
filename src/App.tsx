@@ -4,6 +4,11 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import MainLayout from './components/common/MainLayout';
 import LoginPage from './pages/LoginPage';
 import ChatPage from './pages/ChatPage';
+import DashboardPage from './pages/DashboardPage';
+import ContentCalendarPage from './pages/ContentCalendarPage';
+import TasksPage from './pages/TasksPage';
+import ContentPage from './pages/ContentPage';
+import SettingsPage from './pages/SettingsPage';
 import DataManagementPage from './pages/DataManagementPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { useResponsiveLayout } from './hooks/useResponsiveLayout';
@@ -15,7 +20,7 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/chat" replace />,
+    element: <Navigate to="/dashboard" replace />,
   },
   {
     path: '/login',
@@ -26,10 +31,98 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
+        path: '/dashboard',
+        element: (
+          <MainLayout>
+            <DashboardPage />
+          </MainLayout>
+        ),
+      },
+      {
         path: '/chat',
         element: (
           <MainLayout>
             <ChatPage />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/calendar',
+        element: (
+          <MainLayout>
+            <ContentCalendarPage />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/tasks',
+        element: (
+          <MainLayout>
+            <TasksPage />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/content/all',
+        element: (
+          <MainLayout>
+            <ContentPage type="all" />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/content/published',
+        element: (
+          <MainLayout>
+            <ContentPage type="published" />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/content/scheduled',
+        element: (
+          <MainLayout>
+            <ContentPage type="scheduled" />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/content/pending',
+        element: (
+          <MainLayout>
+            <ContentPage type="pending" />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/content/rejected',
+        element: (
+          <MainLayout>
+            <ContentPage type="rejected" />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/settings/integrations',
+        element: (
+          <MainLayout>
+            <SettingsPage type="integrations" />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/settings/account',
+        element: (
+          <MainLayout>
+            <SettingsPage type="account" />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/settings/advanced',
+        element: (
+          <MainLayout>
+            <SettingsPage type="advanced" />
           </MainLayout>
         ),
       },
