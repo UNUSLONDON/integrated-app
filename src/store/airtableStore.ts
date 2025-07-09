@@ -8,6 +8,8 @@ interface AirtableStore extends AirtableState {
   selectTable: (tableId: string) => Promise<void>;
   refreshData: () => Promise<void>;
   clearData: () => void;
+  getPostsByStatus: (status: string) => AirtableRecord[];
+  getAllPosts: () => AirtableRecord[];
 }
 
 // Mock API functions - in a real app, these would call the Airtable API
@@ -17,36 +19,17 @@ const mockFetchTables = async (_config: AirtableConfig): Promise<AirtableTable[]
   
   return [
     { 
-      id: 'tbl1', 
-      name: 'Products', 
+      id: 'tbl1',
+      name: 'Content Posts',
       fields: [
-        { id: 'fld1', name: 'Name', type: 'text' },
-        { id: 'fld2', name: 'Description', type: 'text' },
-        { id: 'fld3', name: 'Price', type: 'number' },
-        { id: 'fld4', name: 'InStock', type: 'checkbox' }
+        { id: 'fld1', name: 'Title', type: 'text' },
+        { id: 'fld2', name: 'Content', type: 'text' },
+        { id: 'fld3', name: 'Status', type: 'select' },
+        { id: 'fld4', name: 'Author', type: 'text' },
+        { id: 'fld5', name: 'Date', type: 'date' },
+        { id: 'fld6', name: 'Views', type: 'number' }
       ]
     },
-    { 
-      id: 'tbl2', 
-      name: 'Customers', 
-      fields: [
-        { id: 'fld5', name: 'Name', type: 'text' },
-        { id: 'fld6', name: 'Email', type: 'email' },
-        { id: 'fld7', name: 'Address', type: 'text' },
-        { id: 'fld8', name: 'Phone', type: 'phone' }
-      ]
-    },
-    { 
-      id: 'tbl3', 
-      name: 'Orders', 
-      fields: [
-        { id: 'fld9', name: 'OrderID', type: 'text' },
-        { id: 'fld10', name: 'Customer', type: 'link' },
-        { id: 'fld11', name: 'Products', type: 'multilink' },
-        { id: 'fld12', name: 'Total', type: 'currency' },
-        { id: 'fld13', name: 'Date', type: 'date' }
-      ]
-    }
   ];
 };
 
@@ -54,42 +37,43 @@ const mockFetchTableData = async (tableId: string): Promise<AirtableRecord[]> =>
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   
-  // Generate mock data based on table ID
+  // Generate mock content posts data
   if (tableId === 'tbl1') {
+    const statuses = ['published', 'scheduled', 'pending', 'rejected'];
+    const authors = ['John Doe', 'Jane Smith', 'Mike Johnson', 'Sarah Wilson', 'Tom Brown'];
+    const titles = [
+      'Getting Started with React',
+      'Advanced TypeScript Tips',
+      'Building Modern UIs',
+      'State Management Guide',
+      'CSS Grid Mastery',
+      'JavaScript Best Practices',
+      'Web Performance Optimization',
+      'Responsive Design Patterns',
+      'API Integration Strategies',
+      'Testing React Applications',
+      'Modern CSS Techniques',
+      'Database Design Principles',
+      'Security Best Practices',
+      'DevOps for Frontend',
+      'Mobile-First Development'
+    ];
+    
     return Array(15).fill(0).map((_, index) => ({
       id: `rec${index}`,
       fields: {
-        Name: `Product ${index + 1}`,
-        Description: `This is a description for product ${index + 1}`,
-        Price: (Math.random() * 100).toFixed(2),
-        InStock: Math.random() > 0.3
-      },
-      createdTime: new Date().toISOString()
-    }));
-  } else if (tableId === 'tbl2') {
-    return Array(10).fill(0).map((_, index) => ({
-      id: `rec${index + 100}`,
-      fields: {
-        Name: `Customer ${index + 1}`,
-        Email: `customer${index + 1}@example.com`,
-        Address: `${Math.floor(Math.random() * 1000)} Main St, City ${index + 1}`,
-        Phone: `+1 555-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`
-      },
-      createdTime: new Date().toISOString()
-    }));
-  } else {
-    return Array(8).fill(0).map((_, index) => ({
-      id: `rec${index + 200}`,
-      fields: {
-        OrderID: `ORD-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
-        Customer: `Customer ${Math.floor(Math.random() * 10) + 1}`,
-        Products: `Product ${Math.floor(Math.random() * 15) + 1}, Product ${Math.floor(Math.random() * 15) + 1}`,
-        Total: (Math.random() * 500).toFixed(2),
-        Date: new Date(Date.now() - Math.floor(Math.random() * 30) * 86400000).toISOString().split('T')[0]
+        Title: titles[index] || `Blog Post ${index + 1}`,
+        Content: `This is the content for ${titles[index] || `Blog Post ${index + 1}`}. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+        Status: statuses[Math.floor(Math.random() * statuses.length)],
+        Author: authors[Math.floor(Math.random() * authors.length)],
+        Date: new Date(Date.now() - Math.floor(Math.random() * 30) * 86400000).toISOString().split('T')[0],
+        Views: Math.floor(Math.random() * 2000)
       },
       createdTime: new Date().toISOString()
     }));
   }
+  
+  return [];
 };
 
 const useAirtableStore = create<AirtableStore>()(
@@ -204,6 +188,18 @@ const useAirtableStore = create<AirtableStore>()(
           tableData: [],
           lastSync: null
         });
+      },
+      
+      getPostsByStatus: (status: string) => {
+        const { tableData } = get();
+        return tableData.filter(record => 
+          record.fields.Status?.toLowerCase() === status.toLowerCase()
+        );
+      },
+      
+      getAllPosts: () => {
+        const { tableData } = get();
+        return tableData;
       }
     }),
     {

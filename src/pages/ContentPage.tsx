@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, Plus, Filter, Search, Eye, Clock, AlertCircle, X } from 'lucide-react';
+import useStore from '../store';
 
 interface ContentPageProps {
   type?: 'all' | 'published' | 'scheduled' | 'pending' | 'rejected';
@@ -7,19 +8,24 @@ interface ContentPageProps {
 
 const ContentPage: React.FC<ContentPageProps> = ({ type = 'all' }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { getPostsByStatus, getAllPosts, tableData } = useStore.airtable();
   
-  const posts = [
-    { id: 1, title: 'Getting Started with React', status: 'published', author: 'John Doe', date: '2024-01-10', views: 1250 },
-    { id: 2, title: 'Advanced TypeScript Tips', status: 'scheduled', author: 'Jane Smith', date: '2024-01-15', views: 0 },
-    { id: 3, title: 'Building Modern UIs', status: 'pending', author: 'Mike Johnson', date: '2024-01-12', views: 0 },
-    { id: 4, title: 'State Management Guide', status: 'rejected', author: 'Sarah Wilson', date: '2024-01-08', views: 0 },
-    { id: 5, title: 'CSS Grid Mastery', status: 'published', author: 'Tom Brown', date: '2024-01-05', views: 890 },
-  ];
+  // Get posts from Airtable based on the page type
+  const airtablePosts = type === 'all' ? getAllPosts() : getPostsByStatus(type);
+  
+  // Transform Airtable records to match the expected format
+  const posts = airtablePosts.map(record => ({
+    id: record.id,
+    title: record.fields.Title || 'Untitled',
+    status: record.fields.Status?.toLowerCase() || 'draft',
+    author: record.fields.Author || 'Unknown',
+    date: record.fields.Date || new Date().toISOString().split('T')[0],
+    views: record.fields.Views || 0,
+    content: record.fields.Content || ''
+  }));
 
   const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = type === 'all' || post.status === type;
-    return matchesSearch && matchesType;
+    return post.title.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   const getStatusIcon = (status: string) => {
@@ -57,7 +63,12 @@ const ContentPage: React.FC<ContentPageProps> = ({ type = 'all' }) => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">{getPageTitle()}</h1>
-          <p className="text-darkText">Manage your content across all stages of publication.</p>
+          <p className="text-darkText">
+            {tableData.length > 0 
+              ? `Showing ${filteredPosts.length} posts from Airtable` 
+              : 'Connect to Airtable to view your content posts'
+            }
+          </p>
         </div>
         <div className="flex space-x-3">
           <button className="bg-surface hover:bg-surface/80 text-white px-4 py-2 rounded-lg border border-gray-700 flex items-center transition-colors">
@@ -127,8 +138,15 @@ const ContentPage: React.FC<ContentPageProps> = ({ type = 'all' }) => {
         {filteredPosts.length === 0 && (
           <div className="p-12 text-center">
             <FileText className="w-12 h-12 text-darkText mx-auto mb-4" />
-            <h3 className="text-white font-medium mb-2">No posts found</h3>
-            <p className="text-darkText">Try adjusting your search or create a new post.</p>
+            <h3 className="text-white font-medium mb-2">
+              {tableData.length === 0 ? 'No Airtable data connected' : 'No posts found'}
+            </h3>
+            <p className="text-darkText">
+              {tableData.length === 0 
+                ? 'Connect to Airtable in the Data Management section to view your posts here.'
+                : 'Try adjusting your search or create a new post.'
+              }
+            </p>
           </div>
         )}
       </div>

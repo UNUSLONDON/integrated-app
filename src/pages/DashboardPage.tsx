@@ -1,15 +1,23 @@
 import React from 'react';
 import { LayoutDashboard, TrendingUp, Users, FileText, Calendar, CheckSquare, Plus, Edit, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import useStore from '../store';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
+  const { getPostsByStatus, getAllPosts } = useStore.airtable();
+  
+  // Get real data from Airtable
+  const allPosts = getAllPosts();
+  const publishedPosts = getPostsByStatus('published');
+  const scheduledPosts = getPostsByStatus('scheduled');
+  const pendingPosts = getPostsByStatus('pending');
 
   const stats = [
-    { label: 'Total Posts', value: '124', icon: FileText, color: 'text-blue-400' },
-    { label: 'Published', value: '89', icon: TrendingUp, color: 'text-green-400' },
-    { label: 'Scheduled', value: '12', icon: Calendar, color: 'text-yellow-400' },
-    { label: 'Pending', value: '23', icon: CheckSquare, color: 'text-orange-400' },
+    { label: 'Total Posts', value: allPosts.length.toString(), icon: FileText, color: 'text-blue-400' },
+    { label: 'Published', value: publishedPosts.length.toString(), icon: TrendingUp, color: 'text-green-400' },
+    { label: 'Scheduled', value: scheduledPosts.length.toString(), icon: Calendar, color: 'text-yellow-400' },
+    { label: 'Pending', value: pendingPosts.length.toString(), icon: CheckSquare, color: 'text-orange-400' },
   ];
 
   const handleCreateNewPost = () => {
@@ -82,17 +90,23 @@ const DashboardPage = () => {
         <div className="bg-surface rounded-lg p-6 border border-gray-700">
           <h2 className="text-xl font-semibold text-white mb-4">Recent Posts</h2>
           <div className="space-y-4">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="flex items-center space-x-3 p-3 bg-base rounded-lg">
+            {allPosts.slice(0, 3).map((post) => (
+              <div key={post.id} className="flex items-center space-x-3 p-3 bg-base rounded-lg">
                 <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
                   <FileText className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-white font-medium">Blog Post Title {item}</p>
-                  <p className="text-darkText text-sm">Published 2 hours ago</p>
+                  <p className="text-white font-medium">{post.fields.Title || 'Untitled'}</p>
+                  <p className="text-darkText text-sm">
+                    {post.fields.Status || 'Draft'} • {post.fields.Author || 'Unknown'}
+                  </p>
                 </div>
               </div>
-            ))}
+            )) || (
+              <div className="text-center py-4">
+                <p className="text-darkText">Connect to Airtable to see your posts</p>
+              </div>
+            )}
           </div>
         </div>
 
