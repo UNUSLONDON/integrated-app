@@ -29,11 +29,6 @@ const DashboardPage = () => {
   return (
     <div className="p-6">
       <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-          <p className="text-darkText">Welcome back! Here's what's happening with your content.</p>
-        </div>
-        
         {/* Action Buttons */}
         <div className="flex items-center space-x-3">
           <button
