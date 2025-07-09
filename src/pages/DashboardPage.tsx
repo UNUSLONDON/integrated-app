@@ -9,15 +9,17 @@ const DashboardPage = () => {
   
   // Get real data from Airtable
   const allPosts = getAllPosts();
-  const publishedPosts = getPostsByStatus('published');
-  const scheduledPosts = getPostsByStatus('scheduled');
-  const pendingPosts = getPostsByStatus('pending');
+  const postedPosts = getPostsByStatus('Posted');
+  const scheduledPosts = getPostsByStatus('Scheduled for Publishing');
+  const reviewPosts = getPostsByStatus('Review');
+  const approvedPosts = getPostsByStatus('Approved for Publishing');
+  const rejectedPosts = getPostsByStatus('Reject');
 
   const stats = [
     { label: 'Total Posts', value: allPosts.length.toString(), icon: FileText, color: 'text-blue-400' },
-    { label: 'Published', value: publishedPosts.length.toString(), icon: TrendingUp, color: 'text-green-400' },
+    { label: 'Posted', value: postedPosts.length.toString(), icon: TrendingUp, color: 'text-green-400' },
     { label: 'Scheduled', value: scheduledPosts.length.toString(), icon: Calendar, color: 'text-yellow-400' },
-    { label: 'Pending', value: pendingPosts.length.toString(), icon: CheckSquare, color: 'text-orange-400' },
+    { label: 'In Review', value: reviewPosts.length.toString(), icon: CheckSquare, color: 'text-orange-400' },
   ];
 
   const handleCreateNewPost = () => {

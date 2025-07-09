@@ -3,7 +3,7 @@ import { FileText, Plus, Filter, Search, Eye, Clock, AlertCircle, X } from 'luci
 import useStore from '../store';
 
 interface ContentPageProps {
-  type?: 'all' | 'published' | 'scheduled' | 'pending' | 'rejected';
+  type?: 'all' | 'Posted' | 'Scheduled for Publishing' | 'Review' | 'Approved for Publishing' | 'Reject';
 }
 
 const ContentPage: React.FC<ContentPageProps> = ({ type = 'all' }) => {
@@ -17,7 +17,7 @@ const ContentPage: React.FC<ContentPageProps> = ({ type = 'all' }) => {
   const posts = airtablePosts.map(record => ({
     id: record.id,
     title: record.fields.Title || 'Untitled',
-    status: record.fields.Status?.toLowerCase() || 'draft',
+    status: record.fields.Status || 'Draft',
     author: record.fields.Author || 'Unknown',
     date: record.fields.Date || new Date().toISOString().split('T')[0],
     views: record.fields.Views || 0,
@@ -30,30 +30,33 @@ const ContentPage: React.FC<ContentPageProps> = ({ type = 'all' }) => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'published': return <Eye className="w-4 h-4 text-green-400" />;
-      case 'scheduled': return <Clock className="w-4 h-4 text-yellow-400" />;
-      case 'pending': return <AlertCircle className="w-4 h-4 text-orange-400" />;
-      case 'rejected': return <X className="w-4 h-4 text-red-400" />;
+      case 'Posted': return <Eye className="w-4 h-4 text-green-400" />;
+      case 'Scheduled for Publishing': return <Clock className="w-4 h-4 text-yellow-400" />;
+      case 'Review': return <AlertCircle className="w-4 h-4 text-orange-400" />;
+      case 'Approved for Publishing': return <CheckSquare className="w-4 h-4 text-blue-400" />;
+      case 'Reject': return <X className="w-4 h-4 text-red-400" />;
       default: return <FileText className="w-4 h-4 text-gray-400" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'published': return 'text-green-400 bg-green-400/20';
-      case 'scheduled': return 'text-yellow-400 bg-yellow-400/20';
-      case 'pending': return 'text-orange-400 bg-orange-400/20';
-      case 'rejected': return 'text-red-400 bg-red-400/20';
+      case 'Posted': return 'text-green-400 bg-green-400/20';
+      case 'Scheduled for Publishing': return 'text-yellow-400 bg-yellow-400/20';
+      case 'Review': return 'text-orange-400 bg-orange-400/20';
+      case 'Approved for Publishing': return 'text-blue-400 bg-blue-400/20';
+      case 'Reject': return 'text-red-400 bg-red-400/20';
       default: return 'text-gray-400 bg-gray-400/20';
     }
   };
 
   const getPageTitle = () => {
     switch (type) {
-      case 'published': return 'Published Posts';
-      case 'scheduled': return 'Scheduled Posts';
-      case 'pending': return 'Pending Posts';
-      case 'rejected': return 'Rejected Posts';
+      case 'Posted': return 'Posted';
+      case 'Scheduled for Publishing': return 'Scheduled for Publishing';
+      case 'Review': return 'Review';
+      case 'Approved for Publishing': return 'Approved for Publishing';
+      case 'Reject': return 'Reject';
       default: return 'All Posts';
     }
   };
@@ -111,11 +114,11 @@ const ContentPage: React.FC<ContentPageProps> = ({ type = 'all' }) => {
                     <div className="flex items-center space-x-4 mt-2">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${getStatusColor(post.status)}`}>
                         {getStatusIcon(post.status)}
-                        <span className="capitalize">{post.status}</span>
+                        <span>{post.status}</span>
                       </span>
                       <span className="text-darkText text-sm">by {post.author}</span>
                       <span className="text-darkText text-sm">{post.date}</span>
-                      {post.status === 'published' && (
+                      {post.status === 'Posted' && (
                         <span className="text-darkText text-sm">{post.views} views</span>
                       )}
                     </div>

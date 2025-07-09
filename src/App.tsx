@@ -71,34 +71,42 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: '/content/published',
+        path: '/content/posted',
         element: (
           <MainLayout>
-            <ContentPage type="published" />
+            <ContentPage type="Posted" />
           </MainLayout>
         ),
       },
       {
-        path: '/content/scheduled',
+        path: '/content/scheduled-for-publishing',
         element: (
           <MainLayout>
-            <ContentPage type="scheduled" />
+            <ContentPage type="Scheduled for Publishing" />
           </MainLayout>
         ),
       },
       {
-        path: '/content/pending',
+        path: '/content/review',
         element: (
           <MainLayout>
-            <ContentPage type="pending" />
+            <ContentPage type="Review" />
           </MainLayout>
         ),
       },
       {
-        path: '/content/rejected',
+        path: '/content/approved-for-publishing',
         element: (
           <MainLayout>
-            <ContentPage type="rejected" />
+            <ContentPage type="Approved for Publishing" />
+          </MainLayout>
+        ),
+      },
+      {
+        path: '/content/reject',
+        element: (
+          <MainLayout>
+            <ContentPage type="Reject" />
           </MainLayout>
         ),
       },

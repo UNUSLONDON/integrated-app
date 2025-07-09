@@ -74,10 +74,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       title: 'Content',
       items: [
         { path: '/content/all', label: 'All Posts', icon: FileText },
-        { path: '/content/published', label: 'Published', icon: Eye },
-        { path: '/content/scheduled', label: 'Scheduled', icon: Clock },
-        { path: '/content/pending', label: 'Pending', icon: AlertCircle },
-        { path: '/content/rejected', label: 'Rejected', icon: X },
+        { path: '/content/posted', label: 'Posted', icon: Eye },
+        { path: '/content/scheduled-for-publishing', label: 'Scheduled for Publishing', icon: Clock },
+        { path: '/content/review', label: 'Review', icon: AlertCircle },
+        { path: '/content/approved-for-publishing', label: 'Approved for Publishing', icon: CheckSquare },
+        { path: '/content/reject', label: 'Reject', icon: X },
       ]
     },
     {

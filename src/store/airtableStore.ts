@@ -39,7 +39,7 @@ const mockFetchTableData = async (tableId: string): Promise<AirtableRecord[]> =>
   
   // Generate mock content posts data
   if (tableId === 'tbl1') {
-    const statuses = ['published', 'scheduled', 'pending', 'rejected'];
+    const statuses = ['Review', 'Reject', 'Approved for Publishing', 'Posted', 'Scheduled for Publishing'];
     const authors = ['John Doe', 'Jane Smith', 'Mike Johnson', 'Sarah Wilson', 'Tom Brown'];
     const titles = [
       'Getting Started with React',
@@ -193,7 +193,7 @@ const useAirtableStore = create<AirtableStore>()(
       getPostsByStatus: (status: string) => {
         const { tableData } = get();
         return tableData.filter(record => 
-          record.fields.Status?.toLowerCase() === status.toLowerCase()
+          record.fields.Status === status
         );
       },
       
