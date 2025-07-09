@@ -1,10 +1,41 @@
 import React, { useState } from 'react';
-import { FileText, Plus, Filter, Search, Eye, Clock, AlertCircle, X } from 'lucide-react';
+import { FileText, Plus, Filter, Search, Eye, Clock, AlertCircle, X, CheckSquare } from 'lucide-react';
 import useStore from '../store';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface ContentPageProps {
   type?: 'all' | 'Posted' | 'Scheduled for Publishing' | 'Review' | 'Approved for Publishing' | 'Reject';
 }
+
+// New component for content status navigation
+const StatusNavigation: React.FC<{ currentType: string }> = ({ currentType }) => {
+  const statusLinks = [
+    { label: 'All Posts', path: '/content/all', type: 'all' },
+    { label: 'Posted', path: '/content/posted', type: 'Posted' },
+    { label: 'Scheduled', path: '/content/scheduled-for-publishing', type: 'Scheduled for Publishing' },
+    { label: 'Review', path: '/content/review', type: 'Review' },
+    { label: 'Approved', path: '/content/approved-for-publishing', type: 'Approved for Publishing' },
+    { label: 'Rejected', path: '/content/reject', type: 'Reject' },
+  ];
+
+  return (
+    <div className="flex overflow-x-auto mb-6 bg-surface rounded-lg border border-gray-700">
+      {statusLinks.map((link) => (
+        <Link 
+          key={link.type} 
+          to={link.path}
+          className={`px-4 py-3 whitespace-nowrap ${
+            currentType === link.type 
+              ? 'text-primary border-b-2 border-primary font-medium' 
+              : 'text-darkText hover:text-white'
+          }`}
+        >
+          {link.label}
+        </Link>
+      ))}
+    </div>
+  );
+};
 
 const ContentPage: React.FC<ContentPageProps> = ({ type = 'all' }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -84,6 +115,9 @@ const ContentPage: React.FC<ContentPageProps> = ({ type = 'all' }) => {
           </button>
         </div>
       </div>
+
+      {/* Status Navigation */}
+      <StatusNavigation currentType={type} />
 
       {/* Search Bar */}
       <div className="mb-6">

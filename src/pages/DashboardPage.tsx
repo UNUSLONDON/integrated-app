@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, TrendingUp, Users, FileText, Calendar, CheckSquare, Plus, Edit, Eye } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, Users, FileText, Calendar, CheckSquare, Plus, Edit, Eye, X, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store';
 
@@ -17,9 +17,11 @@ const DashboardPage = () => {
 
   const stats = [
     { label: 'Total Posts', value: allPosts.length.toString(), icon: FileText, color: 'text-blue-400' },
-    { label: 'Posted', value: postedPosts.length.toString(), icon: TrendingUp, color: 'text-green-400' },
+    { label: 'Posted', value: postedPosts.length.toString(), icon: Eye, color: 'text-green-400' },
     { label: 'Scheduled', value: scheduledPosts.length.toString(), icon: Calendar, color: 'text-yellow-400' },
-    { label: 'In Review', value: reviewPosts.length.toString(), icon: CheckSquare, color: 'text-orange-400' },
+    { label: 'In Review', value: reviewPosts.length.toString(), icon: AlertCircle, color: 'text-orange-400' },
+    { label: 'Approved', value: approvedPosts.length.toString(), icon: CheckSquare, color: 'text-blue-400' },
+    { label: 'Rejected', value: rejectedPosts.length.toString(), icon: X, color: 'text-red-400' }
   ];
 
   const handleCreateNewPost = () => {
