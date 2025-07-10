@@ -1,4 +1,5 @@
 import { AirtableSetup } from '../components/data-management/AirtableSetup';
+import { AirtableTable } from '../components/data-management/AirtableTable';
 import useStore from '../store';
 
 const DataManagementPage = () => {
@@ -9,21 +10,29 @@ const DataManagementPage = () => {
     refreshData,
     tables,
     tableData,
-    isLoading
+    isLoading,
+    selectTable,
+    selectedTable
   } = useStore.airtable();
 
   const handleConfigSave = async (newConfig: any) => {
     await setConfig(newConfig);
     fetchTables();
-    // Auto-select the first table (Content Posts) and fetch its data
+    // Auto-select the first table or the specific table if provided
     if (tables.length > 0) {
-      const contentTable = tables.find(table => table.name === 'Content Posts') || tables[0];
-      await useStore.airtable.getState().selectTable(contentTable.id);
+      const targetTableId = 'tblEklH6GWRsDgmnT'; // Use the specific table ID from the URL
+      const targetTable = tables.find(table => table.id === targetTableId);
+      const tableToSelect = targetTable || tables[0];
+      await selectTable(tableToSelect.id);
     }
   };
 
   const handleRefreshData = async () => {
     await refreshData();
+  };
+
+  const handleTableSelect = async (tableId: string) => {
+    await selectTable(tableId);
   };
 
   return (
@@ -71,6 +80,12 @@ const DataManagementPage = () => {
                 <p className="text-darkText text-sm mt-1">Connection status</p>
               </div>
             </div>
+            
+            {tables.length > 0 && (
+              <div className="mt-6">
+                <AirtableTable onTableSelect={handleTableSelect} />
+              </div>
+            )}
             
             <div className="mt-8 bg-base rounded-lg p-6 border border-gray-700">
               <h3 className="text-lg font-semibold text-white mb-4">How it works</h3>

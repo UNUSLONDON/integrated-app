@@ -9,8 +9,9 @@ interface AirtableSetupProps {
 
 export const AirtableSetup: React.FC<AirtableSetupProps> = ({ onConfigSave }) => {
   const { isLoading } = useStore.airtable();
-  const [accessToken, setAccessToken] = useState('');
-  const [baseInput, setBaseInput] = useState('');
+  // Pre-fill with the provided credentials
+  const [accessToken, setAccessToken] = useState('patN81ENGC9FHRiYa.8a973bd90a28ab5323678542d6a5ff5971c9545167894c215a693c8ab6df2fe1');
+  const [baseInput, setBaseInput] = useState('https://airtable.com/appSEkiPjdf1a4xNw/tblEklH6GWRsDgmnT');
   const [showInstructions, setShowInstructions] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
