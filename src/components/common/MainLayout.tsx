@@ -1,8 +1,9 @@
 import { useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import useStore from '../../store';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -10,7 +11,7 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { sidebarCollapsed } = useStore.ui();
   const [pageTransition, setPageTransition] = useState(false);
   
   // Effect for page transition animation
@@ -33,16 +34,12 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     }
   };
 
-  const handleSidebarToggle = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
-
   return (
     <div className="flex h-screen overflow-hidden bg-base text-white">
       {/* Sidebar */}
       <Sidebar 
         isCollapsed={sidebarCollapsed} 
-        onToggle={handleSidebarToggle} 
+        onToggle={() => {}} // This prop is no longer used, handled internally
       />
 
       {/* Main Content */}
