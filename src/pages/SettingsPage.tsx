@@ -1,11 +1,23 @@
 import React from 'react';
 import { Puzzle, User, Sliders, Settings } from 'lucide-react';
+import useStore from '../store';
 
 interface SettingsPageProps {
   type?: 'integrations' | 'account' | 'advanced';
 }
 
 const SettingsPage: React.FC<SettingsPageProps> = ({ type = 'integrations' }) => {
+  const { config, clearData } = useStore.airtable();
+  const { addNotification } = useStore.ui();
+
+  const handleDisconnectAirtable = () => {
+    clearData();
+    addNotification({
+      type: 'success',
+      message: 'Airtable disconnected successfully'
+    });
+  };
+
   const getPageTitle = () => {
     switch (type) {
       case 'account': return 'Account Settings';
@@ -36,12 +48,17 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ type = 'integrations' }) =>
         <h3 className="text-lg font-semibold text-white mb-4">Available Integrations</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
-            { name: 'Airtable', status: 'connected', icon: '📊' },
-            { name: 'Google Analytics', status: 'available', icon: '📈' },
-            { name: 'Slack', status: 'available', icon: '💬' },
-            { name: 'Twitter', status: 'available', icon: '🐦' },
-            { name: 'LinkedIn', status: 'available', icon: '💼' },
-            { name: 'WordPress', status: 'available', icon: '📝' },
+            { 
+              name: 'Airtable', 
+              status: config ? 'connected' : 'available', 
+              icon: '📊',
+              onAction: config ? handleDisconnectAirtable : () => window.location.href = '/data'
+            },
+            { name: 'Google Analytics', status: 'available', icon: '📈', onAction: () => {} },
+            { name: 'Slack', status: 'available', icon: '💬', onAction: () => {} },
+            { name: 'Twitter', status: 'available', icon: '🐦', onAction: () => {} },
+            { name: 'LinkedIn', status: 'available', icon: '💼', onAction: () => {} },
+            { name: 'WordPress', status: 'available', icon: '📝', onAction: () => {} },
           ].map((integration) => (
             <div key={integration.name} className="bg-base rounded-lg p-4 border border-gray-700">
               <div className="flex items-center justify-between mb-3">
@@ -57,11 +74,14 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ type = 'integrations' }) =>
                   {integration.status}
                 </span>
               </div>
-              <button className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+              <button 
+                onClick={integration.onAction}
+                className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
                 integration.status === 'connected'
                   ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
                   : 'bg-primary/20 text-primary hover:bg-primary/30'
-              }`}>
+              }`}
+              >
                 {integration.status === 'connected' ? 'Disconnect' : 'Connect'}
               </button>
             </div>
